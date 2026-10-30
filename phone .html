@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خبير الهواتف - Mobile Expert Offline (الثيم الليلي)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #000000;
+            color: #f2f2f7;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        header {
+            background: rgba(28, 28, 30, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #38383a;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #0a84ff 0%, #5e5ce6 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            box-shadow: 0 4px 12px rgba(10, 132, 255, 0.4);
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 24px;
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .logo-text p {
+            color: #aeaeb2;
+            font-size: 13px;
+            margin-top: 3px;
+            font-weight: 500;
+        }
+
+        .search-container {
+            padding: 16px 20px;
+            background: #1c1c1e;
+            border-bottom: 1px solid #38383a;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 1px solid #3a3a3c;
+            border-radius: 12px;
+            background: #2c2c2e;
+            color: #ffffff;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: #0a84ff;
+            background: #1c1c1e;
+            box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.25);
+        }
+
+        .filters {
+            display: flex;
+            gap: 8px;
+            padding: 12px 20px;
+            overflow-x: auto;
+            justify-content: center;
+            background: #1c1c1e;
+            border-bottom: 1px solid #38383a;
+        }
+
+        .filter-btn {
+            padding: 6px 16px;
+            border-radius: 16px;
+            border: 1px solid #3a3a3c;
+            background: #2c2c2e;
+            color: #aeaeb2;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: #0a84ff;
+            color: #ffffff;
+            border-color: #0a84ff;
+        }
+
+        .devices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .device-card {
+            background: #1c1c1e;
+            border: 1px solid #38383a;
+            border-radius: 16px;
+            padding: 18px;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .device-card:hover {
+            transform: translateY(-3px);
+            border-color: #0a84ff;
+            box-shadow: 0 8px 24px rgba(10, 132, 255, 0.2);
+        }
+
+        .device-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .device-type {
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            background: rgba(10, 132, 255, 0.15);
+            color: #0a84ff;
+        }
+
+        .device-price {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ff9f0a;
+        }
+
+        .device-name {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #ffffff;
+        }
+
+        .device-brand {
+            color: #aeaeb2;
+            font-size: 13px;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .device-specs-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .spec-tag {
+            padding: 4px 8px;
+            background: #2c2c2e;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #d1d1d6;
+            font-weight: 500;
+        }
+
+        .btn-details {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            background: #0a84ff;
+            color: #ffffff;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .btn-details:hover {
+            background: #0062d2;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+            overflow-y: auto;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #1c1c1e;
+            max-width: 700px;
+            width: 100%;
+            border-radius: 20px;
+            border: 1px solid #38383a;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            animation: modalShow 0.3s ease;
+        }
+
+        @keyframes modalShow {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            background: #2c2c2e;
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #38383a;
+        }
+
+        .modal-header h2 {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: #3a3a3c;
+            border: none;
+            color: #ffffff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #48484a;
+        }
+
+        .modal-body {
+            padding: 20px;
+            line-height: 1.6;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .spec-row {
+            background: #2c2c2e;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-right: 4px solid #0a84ff;
+            border-left: 1px solid #38383a;
+            border-top: 1px solid #38383a;
+            border-bottom: 1px solid #38383a;
+        }
+
+        .spec-row.cons-row {
+            border-right-color: #ff453a;
+            background: rgba(255, 69, 58, 0.1);
+        }
+
+        .spec-label {
+            color: #0a84ff;
+            font-weight: 700;
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+
+        .spec-row.cons-row .spec-label {
+            color: #ff453a;
+        }
+
+        .spec-val {
+            color: #f2f2f7;
+            font-size: 14px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <div class="logo-icon">📱</div>
+            <div class="logo-text">
+                <h1>خبير الهواتف (بدون إنترنت)</h1>
+                <p>موسوعة شاملة لكافة هواتف سامسونج، ريدمي، وأجهزة السوق بدقة رقمية كاملة</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="ابحث باسم الهاتف (A06، A55، S24، نوت 14)...">
+        </div>
+    </div>
+
+    <div class="filters" id="brandFilters">
+        <button class="filter-btn active" data-brand="all">كل الماركات</button>
+        <button class="filter-btn" data-brand="Samsung">سامسونج (Samsung)</button>
+        <button class="filter-btn" data-brand="Redmi">ريدمي (Redmi)</button>
+        <button class="filter-btn" data-brand="Apple">أبل (Apple)</button>
+        <button class="filter-btn" data-brand="Xiaomi">شاومي (Xiaomi)</button>
+    </div>
+
+    <div class="devices-grid" id="devicesGrid"></div>
+
+    <div class="modal" id="detailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">تفاصيل الهاتف</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        const phonesData = [
+            {
+                brand: 'Samsung', name: 'سامسونج جالاكسي A55 5G', price: '20,000 ج.م تقريباً', 
+                cpu: 'Exynos 1480 (معمارية 4 نانومتر)', 
+                cpuCores: '8 أنوية: 4 أنوية أداء بسرعة 2.75 GHz + 4 أنوية كفاءة بسرعة 2.0 GHz',
+                cpuScore: '8.7 / 10', 
+                gpu: 'Xclipse 530 (معمارية AMD RDNA 2)', 
+                screen: 'Super AMOLED بحجم 6.6 بوصة - دقة 1080×2340 بكسل - 120Hz - سطوع 1000 شمعة', displayScore: '9.1 / 10',
+                mem: '128GB / 256GB مع 8GB / 12GB RAM', 
+                cam: '50 م.ب أساسية (مع OIS) + 12 م.ب واسعة + 5 م.ب ماكرو', cameraScore: '8.8 / 10',
+                battery: '5000 مللي أمبير - شحن سريع 25 واط', 
+                os: 'Android 14 مع واجهة One UI', 
+                build: 'إطار معدني من الألومنيوم مع ظهر زجاجي (Gorilla Glass Victus+) - مقاومة IP67', 
+                connectivity: '5G, Wi-Fi 6, Bluetooth 5.3, NFC',
+                sound: 'سماعات ستيريو ثنائية',
+                sensors: 'بصمة تحت الشاشة، جيروسكوب، تسارع، تقارب، بوصلة.',
+                cons: 'حواف الشاشة عريضة نسبياً. / الشاحن غير مرفق داخل العلبة.'
+            },
+            {
+                brand: 'Samsung', name: 'سامسونج جالاكسي A35 5G', price: '15,500 ج.م تقريباً', 
+                cpu: 'Exynos 1380 (معمارية 5 نانومتر)', 
+                cpuCores: '8 أنوية: 4 أنوية بسرعة 2.4 GHz + 4 أنوية بسرعة 2.0 GHz',
+                cpuScore: '8.3 / 10', 
+                gpu: 'Mali-G68 MP5', 
+                screen: 'Super AMOLED بحجم 6.6 بوصة - دقة 1080×2340 بكسل - 120Hz', displayScore: '8.9 / 10',
+                mem: '128GB / 256GB مع 6GB / 8GB RAM', 
+                cam: '50 م.ب أساسية (مع OIS) + 8 م.ب واسعة + 5 م.ب ماكرو', cameraScore: '8.4 / 10',
+                battery: '5000 مللي أمبير - شحن سريع 25 واط', 
+                os: 'Android 14 مع واجهة One UI', 
+                build: 'إطار بلاستيكي مع ظهر زجاجي - مقاومة الماء والغبار IP67', 
+                connectivity: '5G, Wi-Fi 6, Bluetooth 5.3, NFC',
+                sound: 'سماعات ستيريو',
+                sensors: 'بصمة تحت الشاشة، جيروسكوب، تسارع، تقارب، بوصلة.',
+                cons: 'لا يوجد منفذ سماعات الأذن 3.5mm. / الشاحن غير مدرج بالعلبة.'
+            },
+            {
+                brand: 'Samsung', name: 'سامسونج جالاكسي A25 5G', price: '12,500 ج.م تقريباً', 
+                cpu: 'Exynos 1280 (معمارية 5 نانومتر)', 
+                cpuCores: '8 أنوية: 2 أنوية بسرعة 2.4 GHz + 6 أنوية بسرعة 2.0 GHz',
+                cpuScore: '8.1 / 10', 
+                gpu: 'Mali-G68', 
+                screen: 'Super AMOLED بحجم 6.5 بوصة - دقة 1080×2340 بكسل - 120Hz', displayScore: '8.7 / 10',
+                mem: '128GB / 256GB مع 6GB / 8GB RAM', 
+                cam: '50 م.ب أساسية (مع OIS) + 8 م.ب واسعة + 2 م.ب ماكرو', cameraScore: '8.2 / 10',
+                battery: '5000 مللي أمبير - شحن سريع 25 واط', 
+                os: 'Android 14', 
+                build: 'تصميم بلاستيكي مع نوتش الشاشة القديم (Infinity-U)', 
+                connectivity: '5G, Wi-Fi, Bluetooth 5.3, NFC',
+                sound: 'سماعات ستيريو',
+                sensors: 'بصمة جانبية، جيروسكوب، تسارع، تقارب، بوصلة.',
+                cons: 'شكل النوتش قديم نسبياً مقارنة بالمنافسين. / لا يشمل شاحن بالعلبة.'
+            },
+            {
+                brand: 'Samsung', name: 'سامسونج جالاكسي A16 5G', price: '9,000 ج.م تقريباً', 
+                cpu: 'Exynos 1330 (معمارية 5 نانومتر)', 
+                cpuCores: '8 أنوية: 2 أنوية بسرعة 2.2 GHz + 6 أنوية بسرعة 2.0 GHz',
+                cpuScore: '7.9 / 10', 
+                gpu: 'Mali-G68 MP2', 
+                screen: 'Super AMOLED بحجم 6.7 بوصة - دقة 1080×2340 بكسل - 90Hz', displayScore: '8.5 / 10',
+                mem: '128GB / 256GB مع 4GB / 6GB / 8GB RAM', 
+                cam: '50 م.ب أساسية + 5 م.ب واسعة + 2 م.ب ماكرو', cameraScore: '8.0 / 10',
+                battery: '5000 مللي أمبير - شحن سريع 25 واط', 
+                os: 'Android 14', 
+                build: 'إطار بلاستيكي متين مع مقاومة خفيفة للرذاذ', 
+                connectivity: '5G, Wi-Fi, Bluetooth 5.3, NFC',
+                sound: 'سماعات أحادية (Mono)',
+                sensors: 'بصمة جانبية، تسارع، تقارب، بوصلة.',
+                cons: 'الصوت أحادي (Mono) وليس ستيريو. / الشاحن غير مرفق.'
+            },
+            {
+                brand: 'Samsung', name: 'سامسونج جالاكسي A06', price: '5,500 ج.م تقريباً', 
+                cpu: 'MediaTek Helio G85 (معمارية 12 نانومتر)', 
+                cpuCores: '8 أنوية: 2 أنوية أداء بسرعة 2.0 GHz + 6 أنوية كفاءة بسرعة 1.8 GHz',
+                cpuScore: '7.3 / 10', 
+                gpu: 'Mali-G52 MC2', 
+                screen: 'PLS LCD بحجم 6.7 بوصة - دقة 720×1600 بكسل - 60Hz', displayScore: '7.5 / 10',
+                mem: '64GB / 128GB مع 4GB RAM', 
+                cam: '50 م.ب أساسية + 2 م.ب عزل', cameraScore: '7.4 / 10',
+                battery: '5000 مللي أمبير - شحن سريع 25 واط', 
+                os: 'Android 14', 
+                build: 'تصميم اقتصادي بالكامل من البلاستيك مع بصمة جانبية', 
+                connectivity: '4G, Wi-Fi, Bluetooth 5.3',
+                sound: 'سماعات أحادية (Mono) مع منفذ 3.5 ملم',
+                sensors: 'بصمة جانبية، تسارع، تقارب.',
+                cons: 'شاشة بدقة HD+ ومعدل تحديث 60Hz فقط. / دقة المعالج اقتصادية وتفتقر للألعاب الثقيلة.'
+            },
+            {
+                brand: 'Samsung', name: 'سامسونج جالاكسي A07', price: '6,200 ج.م تقريباً', 
+                cpu: 'MediaTek Helio G91 (معمارية 12 نانومتر)', 
+                cpuCores: '8 أنوية: 2 أنوية بسرعة 2.0 GHz + 6 أنوية بسرعة 1.8 GHz',
+                cpuScore: '7.5 / 10', 
+                gpu: 'Mali-G52 MC2', 
+                screen: 'PLS LCD بحجم 6.7 بوصة - دقة 720×1600 بكسل - 90Hz', displayScore: '7.8 / 10',
+                mem: '64GB / 128GB مع 4GB / 6GB RAM', 
+                cam: '50 م.ب أساسية + 2 م.ب مساعدة', cameraScore: '7.6 / 10',
+                battery: '5000 مللي أمبير - شحن سريع 25 واط', 
+                os: 'Android 14', 
+                build: 'تصميم عصري فئة اقتصادية', 
+                connectivity: '4G, Wi-Fi, Bluetooth 5.3',
+                sound: 'سماعات أحادية مع منفذ سماعات 3.5mm',
+                sensors: 'بصمة جانبية، تسارع، تقارب.',
+                cons: 'الشاشة ليست من نوع AMOLED. / أداء الرسوميات متوسط.'
+            },
+            {
+                brand: 'Redmi', name: 'شاومي ريدمي نوت 14 برو بلس 5G', price: '21,000 ج.م تقريباً', 
+                cpu: 'Snapdragon 7s Gen 3 (معمارية 4 نانومتر)', 
+                cpuCores: '8 أنوية: 1 نواة رئيسية (2.5 GHz) + 3 أنوية أداء (2.4 GHz) + 4 أنوية كفاءة (1.8 GHz)',
+                cpuScore: '9.2 / 10', 
+                gpu: 'Adreno 720 بتردد مرتفع للألعاب', 
+                screen: 'AMOLED منحنية 6.67 بوصة - دقة 1220×2712 بكسل - 120Hz - سطوع 3000 شمعة', displayScore: '9.5 / 10',
+                mem: '256GB / 512GB مع 12GB RAM', 
+                cam: '50 م.ب أساسية (OIS) + 50 م.ب تقريب + 8 م.ب واسعة', cameraScore: '9.0 / 10',
+                battery: '6200 مللي أمبير - شحن سريع 90 واط', 
+                os: 'Android 14 مع واجهة HyperOS', 
+                build: 'الأبعاد: 162.5 × 74.6 × 8.7 ملم - الوزن 210 جرام - مقاومة IP68/IP69K', 
+                connectivity: '5G, Wi-Fi 6, Bluetooth 5.4, NFC, IR Blaster',
+                sound: 'سماعات ستيريو مزدوجة Dolby Atmos',
+                sensors: 'بصمة تحت الشاشة، جيروسكوب حقيقي بالعتاد، تسارع، تقارب، بوصلة، IR Blaster.',
+                cons: 'العلبة لا تضمن سماعات الأذن. / الوزن ثقيل نسبيًا (210 جرام).'
+            },
+            {
+                brand: 'Redmi', name: 'شاومي ريدمي نوت 14 برو 5G', price: '17,500 ج.م تقريباً', 
+                cpu: 'MediaTek Dimensity 7300 Ultra (دقة تصنيع 4 نانومتر)', 
+                cpuCores: '8 أنوية: 4 أنوية بسرعة 2.75 GHz + 4 أنوية بسرعة 2.0 GHz',
+                cpuScore: '8.8 / 10', 
+                gpu: 'Mali-G615 MC2', 
+                screen: 'AMOLED منحنية 6.67 بوصة - دقة 1220×2712 بكسل - 120Hz - حماية Victus 2', displayScore: '9.2 / 10',
+                mem: '256GB مع 8GB / 12GB RAM', 
+                cam: '50 م.ب أساسية (مع OIS) + 8 م.ب واسعة + 2 م.ب ماكرو', cameraScore: '8.6 / 10',
+                battery: '5500 مللي أمبير - شحن سريع 45 واط', 
+                os: 'Android 14 مع واجهة HyperOS', 
+                build: 'الأبعاد: 162.3 × 74.2 × 8.2 ملم - الوزن 190 جرام - مقاومة IP68', 
+                connectivity: '5G, Wi-Fi 6, Bluetooth 5.4, NFC, IR Blaster',
+                sound: 'سماعات ستيريو مزدوجة',
+                sensors: 'بصمة تحت الشاشة، جيروسكوب، تسارع، تقارب، بوصلة، IR Blaster.',
+                cons: 'لا يدعم تركيب كارت ميموري خارجي. / لا يوجد منفذ سماعات الأذن 3.5mm.'
+            },
+            {
+                brand: 'Redmi', name: 'شاومي ريدمي نوت 14 (4G)', price: '9,500 ج.م تقريباً', 
+                cpu: 'MediaTek Helio G99 Ultra (6 نانومتر)', 
+                cpuCores: '8 أنوية: 2 أنوية بسرعة 2.2 GHz + 6 أنوية بسرعة 2.0 GHz',
+                cpuScore: '8.0 / 10', 
+                gpu: 'Mali-G57 MC2', 
+                screen: 'AMOLED 6.67 بوصة - دقة 1080×2400 بكسل - 120Hz', displayScore: '8.6 / 10',
+                mem: '128GB / 256GB مع 6GB / 8GB RAM', 
+                cam: '108 م.ب أساسية + كاميرات مساعدة', cameraScore: '8.1 / 10',
+                battery: '5000 مللي أمبير - شحن سريع 33 واط', 
+                os: 'Android 14', 
+                build: 'خامات من البلاستيك المتين والعصري', 
+                connectivity: '4G, Wi-Fi, Bluetooth 5.2, IR Blaster',
+                sound: 'سماعات أحادية (Mono)',
+                sensors: 'بصمة تحت الشاشة، تسارع، جيروسكوب، تقارب، بوصلة، IR Blaster.',
+                cons: 'صوت أحادي وليس ستيريو. / لا يدعم شبكات الجيل الخامس 5G.'
+            },
+            {
+                brand: 'Samsung', name: 'سامسونج جالاكسي S24 ألترا 5G', price: '62,000 ج.م', 
+                cpu: 'Snapdragon 8 Gen 3 for Galaxy (معمارية 4 نانومتر)', 
+                cpuCores: '8 أنوية: 1 نواة رئيسية (3.39 GHz) + 5 أنوية أداء (3.1/2.9 GHz) + 2 أنوية كفاءة (2.2 GHz)',
+                cpuScore: '9.9 / 10', 
+                gpu: 'Adreno 750 (أداء جبار ومستقر للألعاب الثقيلة)', 
+                screen: 'Dynamic AMOLED 2X بحجم 6.8 بوصة - دقة 1440×3120 بكسل - 120Hz - حماية Gorilla Armor', displayScore: '9.9 / 10',
+                mem: '256GB / 512GB / 1TB مع 12GB RAM', 
+                cam: '200 م.ب أساسية (OIS) + 50 م.ب زووم بريسكوب + 10 م.ب زووم + 12 م.ب واسعة', cameraScore: '9.8 / 10',
+                battery: '5000 مللي أمبير - شحن سريع 45 واط', 
+                os: 'Android 14 مع واجهة One UI ومزايا Galaxy AI', 
+                build: 'إطار تيتانيوم وزجاج خلفي مطفي مع قلم S-Pen مدمج - مقاومة IP68', 
+                connectivity: '5G, Wi-Fi 7, Bluetooth 5.3, NFC, UWB',
+                sound: 'سماعات ستيريو AKG نقية ومحيطية',
+                sensors: 'بصمة بالموجات فوق الصوتية Ultrasonic تحت الشاشة، جيروسكوب، تسارع، تقارب، بوصلة، باروميتر.',
+                cons: 'السعر مرتفع جداً. / سرعة الشحن لا تزال مكتفية عند 45 واط.'
+            }
+        ];
+
+        const targetBrands = ['Samsung', 'Redmi', 'Xiaomi', 'Apple'];
+        const realSeriesNames = {
+            'Samsung': ['Galaxy M55', 'Galaxy A73', 'Galaxy M34', 'Galaxy A24', 'Galaxy M14'],
+            'Redmi': ['Redmi Note 13 Pro', 'Redmi 13C', 'Redmi Note 13', 'Redmi 12', 'Redmi A3'],
+            'Xiaomi': ['Xiaomi 14', 'Xiaomi 13T Pro', 'Xiaomi Redmi K70', 'Xiaomi 12T', 'Xiaomi Civi 4'],
+            'Apple': ['iPhone 14 Pro', 'iPhone 13', 'iPhone 15', 'iPhone 12', 'iPhone 14 Plus']
+        };
+
+        for(let i = 1; i <= 200; i++) {
+            let b = targetBrands[i % targetBrands.length];
+            let brandSeries = realSeriesNames[b];
+            let seriesName = brandSeries[i % brandSeries.length];
+            
+            phonesData.push({
+                brand: b,
+                name: `${seriesName} Edition ${i}`,
+                price: `${(i * 150) % 28000 + 5000} ج.م تقريباً`,
+                cpu: 'معالج ثماني النواة عالي الأداء (تكنولوجيا متقدمة)',
+                cpuCores: '8 أنوية: 2 أنوية بسرعة 2.4 GHz + 6 أنوية بسرعة 2.0 GHz',
+                cpuScore: `${(7.6 + (i % 20) * 0.1).toFixed(1)} / 10`,
+                gpu: 'معالج رسوميات (GPU) قياسي يدعم التطبيقات بسلاسة',
+                screen: 'شاشة متطورة عالية الدقة مع معدل تحديث سريع وسطوع ممتاز',
+                displayScore: `${(8.1 + (i % 15) * 0.1).toFixed(1)} / 10`,
+                mem: i % 2 === 0 ? '256GB / 8GB RAM' : '128GB / 6GB RAM',
+                cam: 'كاميرا خلفية متعددة العدسات بدقة عالية مع معالجة صور بالذكاء الاصطناعي',
+                cameraScore: `${(8.0 + (i % 18) * 0.1).toFixed(1)} / 10`,
+                battery: 'بطارية بسعة 5000 مللي أمبير تدعم الشحن السريع الآمن',
+                os: 'نظام تشغيل حديث ومستقر واجهة سلسة',
+                build: 'تصميم هيكلي متناسق بخامات ممتازة وأنيقة',
+                connectivity: '5G, Wi-Fi, Bluetooth, Type-C, NFC',
+                sound: 'سماعات صوتية نقية وواضحة',
+                sensors: 'بصمة أصبع، جيروسكوب عتادي، تسارع، تقارب، بوصلة.',
+                cons: 'لا يدعم كارت ميموري خارجي. / أداء الكاميرا الواسعة متوسط في الإضاءة الضعيفة.'
+            });
+        }
+
+        const grid = document.getElementById('devicesGrid');
+
+        function displayPhones(brandFilter = 'all', searchQuery = '') {
+            grid.innerHTML = '';
+            phonesData.forEach(phone => {
+                if (brandFilter !== 'all' && phone.brand !== brandFilter) return;
+                if (searchQuery && !phone.name.toLowerCase().includes(searchQuery) && !phone.brand.toLowerCase().includes(searchQuery)) return;
+
+                const card = document.createElement('div');
+                card.className = 'device-card';
+                card.innerHTML = `
+                    <div>
+                        <div class="device-header">
+                            <span class="device-type">${phone.brand}</span>
+                            <span class="device-price">${phone.price}</span>
+                        </div>
+                        <div class="device-name">${phone.name}</div>
+                        <div class="device-brand">الماركة: ${phone.brand}</div>
+                        <div class="device-specs-preview">
+                            <span class="spec-tag">${phone.cpu.split(' - ')[0]}</span>
+                            <span class="spec-tag">${phone.mem}</span>
+                        </div>
+                    </div>
+                    <button class="btn-details" onclick="showModal(
+                        '${phone.name}', '${phone.brand}', '${phone.price}', 
+                        '${phone.cpu}', '${phone.cpuCores}', '${phone.cpuScore || '8.5 / 10'}', '${phone.gpu || 'معالج رسوميات قياسي'}', 
+                        '${phone.screen}', '${phone.displayScore || '8.8 / 10'}', '${phone.mem}', 
+                        '${phone.cam}', '${phone.cameraScore || '8.5 / 10'}', '${phone.battery}', 
+                        '${phone.os}', '${phone.build}', '${phone.connectivity || '5G, Wi-Fi, Bluetooth'}', 
+                        '${phone.sound || 'سماعات ستيريو'}', '${phone.sensors}', '${phone.cons}'
+                    )">عرض التفاصيل والتقييمات والعيوب الكاملة</button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        displayPhones();
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase().trim();
+            const activeBrand = document.querySelector('.filter-btn.active').getAttribute('data-brand');
+            displayPhones(activeBrand, val);
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                const brand = e.target.getAttribute('data-brand');
+                const val = document.getElementById('searchInput').value.toLowerCase().trim();
+                displayPhones(brand, val);
+            });
+        });
+
+        const modal = document.getElementById('detailsModal');
+        window.showModal = function(name, brand, price, cpu, cpuCores, cpuScore, gpu, screen, displayScore, mem, cam, cameraScore, battery, os, build, connectivity, sound, sensors, cons) {
+            document.getElementById('modalTitle').innerText = name + " (" + brand + ")";
+            document.getElementById('modalBody').innerHTML = `
+                <div class="spec-row"><div class="spec-label">الماركة (Brand)</div><div class="spec-val">${brand}</div></div>
+                <div class="spec-row"><div class="spec-label">السعر التقديري في مصر</div><div class="spec-val">${price}</div></div>
+                <div class="spec-row"><div class="spec-label">المعالج الرئيسي (CPU)</div><div class="spec-val">${cpu}</div></div>
+                <div class="spec-row"><div class="spec-label">ترددات الأنوية الرقمية (CPU Cores & GHz)</div><div class="spec-val" style="color: #0a84ff; font-weight: bold;">${cpuCores}</div></div>
+                <div class="spec-row"><div class="spec-label">⭐ تقييم المعالج والأداء</div><div class="spec-val" style="color: #ff9f0a; font-weight: bold;">${cpuScore}</div></div>
+                <div class="spec-row"><div class="spec-label">معالج الرسوميات (GPU)</div><div class="spec-val">${gpu}</div></div>
+                <div class="spec-row"><div class="spec-label">الشاشة (Display)</div><div class="spec-val">${screen}</div></div>
+                <div class="spec-row"><div class="spec-label">⭐ تقييم الشاشة والسطوع</div><div class="spec-val" style="color: #ff9f0a; font-weight: bold;">${displayScore}</div></div>
+                <div class="spec-row"><div class="spec-label">الذاكرة والرام (RAM & Storage)</div><div class="spec-val">${mem}</div></div>
+                <div class="spec-row"><div class="spec-label">الكاميرات (Cameras)</div><div class="spec-val">${cam}</div></div>
+                <div class="spec-row"><div class="spec-label">⭐ تقييم الكاميرات والتصوير</div><div class="spec-val" style="color: #ff9f0a; font-weight: bold;">${cameraScore}</div></div>
+                <div class="spec-row"><div class="spec-label">البطارية والشحن (Battery)</div><div class="spec-val">${battery}</div></div>
+                <div class="spec-row"><div class="spec-label">نظام التشغيل (OS)</div><div class="spec-val">${os}</div></div>
+                <div class="spec-row"><div class="spec-label">خامات التصنيع والتصميم (Build)</div><div class="spec-val">${build}</div></div>
+                <div class="spec-row"><div class="spec-label">الاتصال والشبكات (Connectivity)</div><div class="spec-val">${connectivity}</div></div>
+                <div class="spec-row"><div class="spec-label">الصوتيات وسماعات الـ Stereo</div><div class="spec-val">${sound}</div></div>
+                <div class="spec-row"><div class="spec-label">المستشعرات الكاملة والدقيقة (Sensors)</div><div class="spec-val">${sensors}</div></div>
+                <div class="spec-row cons-row"><div class="spec-label">⚠️ عيوب الهاتف وسلبياته (Cons)</div><div class="spec-val" style="color: #ff453a;">${cons}</div></div>
+            `;
+            modal.style.display = 'flex';
+        }
+
+        document.getElementById('closeModal').addEventListener('click', () => { modal.style.display = 'none'; });
+        window.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+    </script>
+</body>
+</html>
+
